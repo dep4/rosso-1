@@ -1,7 +1,6 @@
 package dash
 
 import (
-   "encoding/json"
    "encoding/xml"
    "fmt"
    "net/http"
@@ -10,16 +9,7 @@ import (
    "testing"
 )
 
-var tests = []string{
-   "mpd/amc.mpd",
-   "mpd/paramount-lang.mpd",
-   "mpd/paramount-role.mpd",
-   "mpd/roku.mpd",
-}
-
 func Test_Info(t *testing.T) {
-   enc := json.NewEncoder(os.Stdout)
-   enc.SetIndent("", "   ")
    for _, name := range tests {
       file, err := os.Open(name)
       if err != nil {
@@ -35,16 +25,20 @@ func Test_Info(t *testing.T) {
       fmt.Println(name)
       reps := pre.Representation()
       for _, rep := range reps.Audio() {
-         enc.Encode(rep)
-         break
+         fmt.Println(rep)
       }
       for _, rep := range reps.Video() {
-         enc.Encode(rep)
-         break
+         fmt.Println(rep)
       }
-      break
       fmt.Println()
    }
+}
+
+var tests = []string{
+   "mpd/amc.mpd",
+   "mpd/paramount-lang.mpd",
+   "mpd/paramount-role.mpd",
+   "mpd/roku.mpd",
 }
 
 func Test_Media(t *testing.T) {
