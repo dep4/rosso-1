@@ -1,7 +1,7 @@
 package http
 
 import (
-   "2a.pages.dev/rosso/printable"
+   "2a.pages.dev/rosso/strconv"
    "fmt"
    "net/http"
    "net/http/httputil"
@@ -17,7 +17,7 @@ func (c Client) Do(req Request) (*Response, error) {
       if err != nil {
          return nil, err
       }
-      enc := printable.Encode(dump)
+      enc := strconv.Encode(dump)
       if strings.HasSuffix(enc, "\n") {
          fmt.Print(enc)
       } else {
