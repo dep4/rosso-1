@@ -1,7 +1,7 @@
 package main
 
 import (
-   "2a.pages.dev/rosso/printable"
+   "2a.pages.dev/rosso/strconv"
    "bytes"
    "embed"
    "fmt"
@@ -9,11 +9,17 @@ import (
    "net/http"
    "net/http/httputil"
    "net/url"
-   "strconv"
    "strings"
    "text/template"
    "unicode/utf8"
 )
+
+func quote(s string) string {
+   if can_backquote(s) {
+      return "`" + s + "`"
+   }
+   return strconv.Quote(s)
+}
 
 // go.dev/ref/spec#String_literals
 func can_backquote(s string) bool {
@@ -25,18 +31,11 @@ func can_backquote(s string) bool {
       if b == '`' {
          return false
       }
-      if printable.Binary_Byte(b) {
+      if strconv.Binary_Data(b) {
          return false
       }
    }
    return utf8.ValidString(s)
-}
-
-func quote(s string) string {
-   if can_backquote(s) {
-      return "`" + s + "`"
-   }
-   return strconv.Quote(s)
 }
 
 //go:embed _template.go
@@ -92,7 +91,7 @@ func write(req *http.Request, file io.Writer) error {
       if err != nil {
          return err
       }
-      enc := printable.Encode(dump)
+      enc := strconv.Encode(dump)
       if strings.HasSuffix(enc, "\n") {
          fmt.Print(enc)
       } else {
