@@ -1,7 +1,7 @@
 package http
 
 import (
-   "2a.pages.dev/rosso/printable"
+   "2a.pages.dev/rosso/strconv"
    "bufio"
    "bytes"
    "io"
@@ -129,11 +129,11 @@ func (p *Progress) Write(data []byte) (int, error) {
    if lap >= time.Second {
       total := time.Since(p.total).Seconds()
       var b []byte
-      b = printable.Ratio(p.bytes_written, p.bytes).Percent(b)
+      b = strconv.Ratio(p.bytes_written, p.bytes).Percent(b)
       b = append(b, "   "...)
-      b = printable.New_Number(p.bytes_written).Size(b)
+      b = strconv.New_Number(p.bytes_written).Size(b)
       b = append(b, "   "...)
-      b = printable.Ratio(p.bytes_written, total).Rate(b)
+      b = strconv.Ratio(p.bytes_written, total).Rate(b)
       b = append(b, '\n')
       os.Stderr.Write(b)
       p.lap = p.lap.Add(lap)
