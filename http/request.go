@@ -5,56 +5,54 @@ import (
    "io"
    "net/http"
    "net/url"
-   "strings"
 )
+
+type Body interface {
+   []byte | string
+}
 
 type Request struct {
    *http.Request
 }
 
 func Get() *Request {
-   ref := new(url.URL)
-   return New_Request(http.MethodGet, ref)
-}
-
-func Get_Parse(s string) (*Request, error) {
-   ref, err := url.Parse(s)
-   if err != nil {
-      return nil, err
-   }
-   return New_Request(http.MethodGet, ref), nil
+   return New_Request(http.MethodGet, new(url.URL))
 }
 
 func New_Request(method string, ref *url.URL) *Request {
-   var r Request
-   r.Request = new(http.Request) // .Request
-   r.Header = make(http.Header) // .Request.Header
-   r.Method = method // .Request.Method
-   r.ProtoMajor = 1 // .Request.ProtoMajor
-   r.ProtoMinor = 1 // .Request.ProtoMinor
-   r.URL = ref
-   return &r
+   return &Request{
+      &http.Request{
+         Header: make(http.Header),
+         Method: method,
+         ProtoMajor: 1,
+         ProtoMinor: 1,
+         URL: ref,
+      },
+   }
 }
 
-func Post() *Request {
-   ref := new(url.URL)
-   return New_Request(http.MethodPost, ref)
-}
-
-func Post_Parse(s string) (*Request, error) {
-   ref, err := url.Parse(s)
+func Parse_Get(ref string) (*Request, error) {
+   href, err := url.Parse(ref)
    if err != nil {
       return nil, err
    }
-   return New_Request(http.MethodPost, ref), nil
+   return New_Request(http.MethodGet, href), nil
 }
 
-func (r Request) Body_Bytes(b []byte) {
-   read := bytes.NewReader(b)
-   r.Body = io.NopCloser(read)
+func Parse_Post[T Body](ref string, body T) (*Request, error) {
+   href, err := url.Parse(ref)
+   if err != nil {
+      return nil, err
+   }
+   read := bytes.NewReader([]byte(body))
+   req := New_Request(http.MethodPost, href)
+   req.Body = io.NopCloser(read)
+   return req, nil
 }
 
-func (r Request) Body_String(s string) {
-   read := strings.NewReader(s)
-   r.Body = io.NopCloser(read)
+func Post[T Body](body T) *Request {
+   read := bytes.NewReader([]byte(body))
+   req := New_Request(http.MethodPost, new(url.URL))
+   req.Body = io.NopCloser(read)
+   return req
 }

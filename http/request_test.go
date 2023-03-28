@@ -7,7 +7,7 @@ import (
 )
 
 func Test_URL(t *testing.T) {
-   req, err := Get_Parse("http://httpbin.org/get")
+   req, err := Parse_Get("http://httpbin.org/get")
    if err != nil {
       t.Fatal(err)
    }
@@ -34,11 +34,10 @@ func Test_Request(t *testing.T) {
 }
 
 func Test_Body(t *testing.T) {
-   req := Post()
+   req := Post("hello=world")
    req.URL.Scheme = "http"
    req.URL.Host = "httpbin.org"
    req.URL.Path = "/post"
-   req.Body_String("hello=world")
    res, err := new(http.Transport).RoundTrip(req.Request)
    if err != nil {
       t.Fatal(err)
