@@ -13,48 +13,46 @@ type Request struct {
 }
 
 func Get() *Request {
-   ref := new(url.URL)
-   return New_Request(http.MethodGet, ref)
+   return New_Request(http.MethodGet, new(url.URL))
 }
 
-func Get_Parse(s string) (*Request, error) {
-   ref, err := url.Parse(s)
+func Get_Parse(ref string) (*Request, error) {
+   href, err := url.Parse(ref)
    if err != nil {
       return nil, err
    }
-   return New_Request(http.MethodGet, ref), nil
+   return New_Request(http.MethodGet, href), nil
 }
 
 func New_Request(method string, ref *url.URL) *Request {
-   var r Request
-   r.Request = new(http.Request) // .Request
-   r.Header = make(http.Header) // .Request.Header
-   r.Method = method // .Request.Method
-   r.ProtoMajor = 1 // .Request.ProtoMajor
-   r.ProtoMinor = 1 // .Request.ProtoMinor
-   r.URL = ref
-   return &r
+   req := http.Request{
+      Header: make(http.Header),
+      Method: method,
+      ProtoMajor: 1,
+      ProtoMinor: 1,
+      URL: ref,
+   }
+   return &Request{&req}
 }
 
-func Post() *Request {
-   ref := new(url.URL)
-   return New_Request(http.MethodPost, ref)
+func Post(body string) *Request {
+   req := New_Request(http.MethodPost, new(url.URL))
+   req.Body = io.NopCloser(strings.NewReader(body))
+   return req
 }
 
-func Post_Parse(s string) (*Request, error) {
-   ref, err := url.Parse(s)
+func Post_Bytes(body []byte) *Request {
+   req := New_Request(http.MethodPost, new(url.URL))
+   req.Body = io.NopCloser(bytes.NewReader(body))
+   return req
+}
+
+func Post_Parse(ref string, body []byte) (*Request, error) {
+   href, err := url.Parse(ref)
    if err != nil {
       return nil, err
    }
-   return New_Request(http.MethodPost, ref), nil
-}
-
-func (r Request) Body_Bytes(b []byte) {
-   read := bytes.NewReader(b)
-   r.Body = io.NopCloser(read)
-}
-
-func (r Request) Body_String(s string) {
-   read := strings.NewReader(s)
-   r.Body = io.NopCloser(read)
+   req := New_Request(http.MethodPost, href)
+   req.Body = io.NopCloser(bytes.NewReader(body))
+   return req, nil
 }
