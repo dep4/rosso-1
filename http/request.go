@@ -47,6 +47,10 @@ func Post_URL(ref string) (*Request, error) {
    return New_Request(http.MethodPost, href), nil
 }
 
+func Put() *Request {
+   return New_Request(http.MethodPut, new(url.URL))
+}
+
 func (r Request) Body_Bytes(b []byte) {
    r.Body = io.NopCloser(bytes.NewReader(b))
 }
