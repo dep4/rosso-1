@@ -3,27 +3,14 @@ package json
 import (
    "bytes"
    "encoding/json"
-   "errors"
+   "io"
 )
 
-var (
-   MarshalIndent = json.MarshalIndent
-   NewDecoder = json.NewDecoder
-)
-
-func Cut(data, sep []byte, v any) error {
-   return unmarshal(data, sep, v, false)
-}
-
-func Cut_Before(data, sep []byte, v any) error {
-   return unmarshal(data, sep, v, true)
-}
-
+// github.com/golang/go/blob/go1.20.3/src/encoding/xml/xml.go
 func unmarshal(data, sep []byte, v any, before bool) error {
-   var found bool
-   _, data, found = bytes.Cut(data, sep)
+   _, data, found := bytes.Cut(data, sep)
    if !found {
-      return errors.New("sep not found")
+      return io.EOF
    }
    if before {
       data = append(sep, data...)
@@ -36,4 +23,17 @@ func unmarshal(data, sep []byte, v any, before bool) error {
          return json.Unmarshal(data, v)
       }
    }
+}
+
+var (
+   MarshalIndent = json.MarshalIndent
+   NewDecoder = json.NewDecoder
+)
+
+func Cut(data, sep []byte, v any) error {
+   return unmarshal(data, sep, v, false)
+}
+
+func Cut_Before(data, sep []byte, v any) error {
+   return unmarshal(data, sep, v, true)
 }
