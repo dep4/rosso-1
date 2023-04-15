@@ -24,6 +24,10 @@ func Get_URL(ref string) (*Request, error) {
    return New_Request(http.MethodGet, href), nil
 }
 
+func Head() *Request {
+   return New_Request(http.MethodHead, new(url.URL))
+}
+
 func New_Request(method string, ref *url.URL) *Request {
    req := http.Request{
       Header: make(http.Header),
