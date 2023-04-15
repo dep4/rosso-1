@@ -11,7 +11,7 @@ import (
    "time"
 )
 
-const Status_Found = http.StatusFound
+const StatusFound = http.StatusFound
 
 type Client struct {
    Log_Level int // this needs to work with flag.IntVar

@@ -69,3 +69,14 @@ func (n Number) Size(dst []byte) []byte {
    }
    return n.scale(dst, units)
 }
+
+type Ordered interface {
+   ~float32 | ~float64 |
+   ~int | ~int8 | ~int16 | ~int32 | ~int64 |
+   ~uint | ~uint8 | ~uint16 | ~uint32 | ~uint64 | ~uintptr
+}
+
+type unit_measure struct {
+   factor float64
+   name string
+}
