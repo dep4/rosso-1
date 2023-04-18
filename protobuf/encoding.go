@@ -1,11 +1,44 @@
 package protobuf
 
 import (
+   "fmt"
    "google.golang.org/protobuf/encoding/protowire"
    "io"
    "errors"
    "sort"
 )
+
+// If you need indent, just use this with `go fmt`.
+func (m Message) GoString() string {
+   b := []byte("protobuf.Message{")
+   for num, tok := range m {
+      b = fmt.Append(b, num, ":")
+      switch tok.(type) {
+      case Fixed32:
+         b = fmt.Appendf(b, "protobuf.Fixed32(%v)", tok)
+      case Fixed64:
+         b = fmt.Appendf(b, "protobuf.Fixed64(%v)", tok)
+      case String:
+         b = fmt.Appendf(b, "protobuf.String(%q)", tok)
+      case Varint:
+         b = fmt.Appendf(b, "protobuf.Varint(%v)", tok)
+      default:
+         b = fmt.Appendf(b, "%#v", tok)
+      }
+      b = append(b, ',')
+   }
+   b = append(b, "\n}"...)
+   return string(b)
+}
+
+func (m Raw) GoString() string {
+   b := []byte("protobuf.Raw{")
+   b = fmt.Appendf(b, "Bytes:%#v", m.Bytes)
+   b = fmt.Appendf(b, ",String:%q", m.String)
+   b = fmt.Appendf(b, ",Message:%#v", m.Message)
+   b = append(b, '}')
+   return string(b)
+}
 
 func (m Message) Marshal() []byte {
    var nums []Number

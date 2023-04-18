@@ -5,7 +5,6 @@ import (
    "google.golang.org/protobuf/encoding/protowire"
 )
 
-// If you need fmt.GoStringer with indent, just use `go fmt`.
 type Message map[Number]Encoder
 
 func (m Message) Add(num Number, value Message) error {
